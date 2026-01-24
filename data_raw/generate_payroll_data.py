@@ -5,7 +5,7 @@ from datetime import datetime
 np.random.seed(42)
 
 # Mid-size dataset: 500 employees
-n_emp = 500
+n_emp = 18000
 employee_ids = np.arange(100001, 100001 + n_emp)
 
 departments = ["Finance", "HR", "Operations", "Sales", "IT", "Manufacturing"]
