@@ -97,14 +97,18 @@ def generate_attendance_for_month(emp_ids, year, month):
 att_emp_ids = employee_ids
 
 all_attendance_dfs = []
-# Example: Jan, Feb, Mar 2025
-for m in [1, 2, 3]:
-    month_df = generate_attendance_for_month(att_emp_ids, 2025, m)
+
+# Generate 24 months: 2024-01 to 2025-12
+years_months = [(2024, m) for m in range(1, 13)] + [(2025, m) for m in range(1, 13)]
+
+for y, m in years_months:
+    month_df = generate_attendance_for_month(att_emp_ids, y, m)
     all_attendance_dfs.append(month_df)
 
-attendance_sample_df = pd.concat(all_attendance_dfs, ignore_index=True)
-attendance_sample_df.to_csv("data_raw/attendance_sample.csv", index=False)
-print("Created data_raw/attendance_sample.csv with", len(attendance_sample_df), "rows")
+attendance_df = pd.concat(all_attendance_dfs, ignore_index=True)
+attendance_df.to_csv("data_raw/attendance.csv", index=False)
+print("Created data_raw/attendance.csv with", len(attendance_df), "rows")
+
 
 
 
