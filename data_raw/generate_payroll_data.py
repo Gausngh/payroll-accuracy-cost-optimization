@@ -93,7 +93,8 @@ def generate_attendance_for_month(emp_ids, year, month):
 
 # ---- Attendance table (3-month sample) ----
 # Use only first 200 employees for now
-att_emp_ids = employee_ids[:200]
+# Use all employees now
+att_emp_ids = employee_ids
 
 all_attendance_dfs = []
 # Example: Jan, Feb, Mar 2025
