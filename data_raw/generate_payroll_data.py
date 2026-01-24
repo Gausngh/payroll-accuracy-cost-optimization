@@ -40,3 +40,15 @@ df["status"] = np.random.choice(
 
 df.to_csv("data_raw/employee_master.csv", index=False)
 print("Created data_raw/employee_master.csv with", len(df), "rows")
+
+# ---- Tax slabs table ----
+tax_slabs = pd.DataFrame([
+    {"slab_id": 1, "lower_limit": 0,       "upper_limit": 250000,     "tax_rate": 0.00},
+    {"slab_id": 2, "lower_limit": 250000,  "upper_limit": 500000,     "tax_rate": 0.05},
+    {"slab_id": 3, "lower_limit": 500000,  "upper_limit": 1000000,    "tax_rate": 0.20},
+    {"slab_id": 4, "lower_limit": 1000000, "upper_limit": 999999999,  "tax_rate": 0.30},
+])
+
+tax_slabs.to_csv("data_raw/tax_slabs.csv", index=False)
+print("Created data_raw/tax_slabs.csv with", len(tax_slabs), "rows")
+
