@@ -91,10 +91,19 @@ def generate_attendance_for_month(emp_ids, year, month):
     return pd.DataFrame(all_rows)
 
 
-# Use only first 200 employees for the small test
+# ---- Attendance table (3-month sample) ----
+# Use only first 200 employees for now
 att_emp_ids = employee_ids[:200]
-attendance_df = generate_attendance_for_month(att_emp_ids, 2025, 1)
-attendance_df.to_csv("data_raw/attendance_small.csv", index=False)
-print("Created data_raw/attendance_small.csv with", len(attendance_df), "rows")
+
+all_attendance_dfs = []
+# Example: Jan, Feb, Mar 2025
+for m in [1, 2, 3]:
+    month_df = generate_attendance_for_month(att_emp_ids, 2025, m)
+    all_attendance_dfs.append(month_df)
+
+attendance_sample_df = pd.concat(all_attendance_dfs, ignore_index=True)
+attendance_sample_df.to_csv("data_raw/attendance_sample.csv", index=False)
+print("Created data_raw/attendance_sample.csv with", len(attendance_sample_df), "rows")
+
 
 
