@@ -55,39 +55,45 @@ print("Created data_raw/tax_slabs.csv with", len(tax_slabs), "rows")
 # ---- Attendance table (1 month test) ----
 from datetime import date, timedelta
 
+def generate_attendance_for_month(emp_ids, year, month):
+    # Build start and end dates for the given month
+    start_date = date(year, month, 1)
+    if month == 12:
+        end_date = date(year + 1, 1, 1) - timedelta(days=1)
+    else:
+        end_date = date(year, month + 1, 1) - timedelta(days=1)
+
+    all_rows = []
+
+    for emp_id in emp_ids:
+        current = start_date
+        while current <= end_date:
+            weekday = current.weekday()  # 0=Mon, 6=Sun
+            if weekday < 5:
+                shift_hours = 8
+                unpaid_leave_hours = 0
+                paid_leave_hours = 0
+            else:
+                shift_hours = 0
+                unpaid_leave_hours = 0
+                paid_leave_hours = 0
+
+            all_rows.append({
+                "employee_id": emp_id,
+                "date": current,
+                "shift_hours": shift_hours,
+                "unpaid_leave_hours": unpaid_leave_hours,
+                "paid_leave_hours": paid_leave_hours,
+            })
+
+            current += timedelta(days=1)
+
+    return pd.DataFrame(all_rows)
+
+
 # Use only first 200 employees for the small test
 att_emp_ids = employee_ids[:200]
-
-start_date = date(2025, 1, 1)
-end_date = date(2025, 1, 31)
-
-all_attendance_rows = []
-
-for emp_id in att_emp_ids:
-    current = start_date
-    while current <= end_date:
-        # Simple rule: Mon–Fri = workday, Sat–Sun = no work
-        weekday = current.weekday()  # 0=Mon, 6=Sun
-        if weekday < 5:
-            shift_hours = 8
-            unpaid_leave_hours = 0
-            paid_leave_hours = 0
-        else:
-            shift_hours = 0
-            unpaid_leave_hours = 0
-            paid_leave_hours = 0
-
-        all_attendance_rows.append({
-            "employee_id": emp_id,
-            "date": current,
-            "shift_hours": shift_hours,
-            "unpaid_leave_hours": unpaid_leave_hours,
-            "paid_leave_hours": paid_leave_hours,
-        })
-
-        current += timedelta(days=1)
-
-attendance_df = pd.DataFrame(all_attendance_rows)
+attendance_df = generate_attendance_for_month(att_emp_ids, 2025, 1)
 attendance_df.to_csv("data_raw/attendance_small.csv", index=False)
 print("Created data_raw/attendance_small.csv with", len(attendance_df), "rows")
 
