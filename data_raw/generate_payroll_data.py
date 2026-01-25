@@ -109,6 +109,57 @@ attendance_df = pd.concat(all_attendance_dfs, ignore_index=True)
 attendance_df.to_csv("data_raw/attendance.csv", index=False)
 print("Created data_raw/attendance.csv with", len(attendance_df), "rows")
 
+# ---- Overtime table (3-month sample) ----
+
+def generate_overtime_for_month(emp_ids, year, month, prob_ot=0.25):
+    start_date = date(year, month, 1)
+    if month == 12:
+        end_date = date(year + 1, 1, 1) - timedelta(days=1)
+    else:
+        end_date = date(year, month + 1, 1) - timedelta(days=1)
+
+    overtime_types = ["Weekday", "Weekend", "Holiday"]
+    rows = []
+
+    for emp_id in emp_ids:
+        current = start_date
+        while current <= end_date:
+            weekday = current.weekday()  # 0=Mon..6=Sun
+
+            # Decide if overtime happens on this day
+            if np.random.rand() < prob_ot:
+                # Basic pattern: smaller OT on weekdays, more on weekends
+                if weekday < 5:
+                    ot_hours = np.round(np.random.uniform(1, 3), 1)
+                    ot_type = "Weekday"
+                else:
+                    ot_hours = np.round(np.random.uniform(2, 5), 1)
+                    ot_type = np.random.choice(["Weekend", "Holiday"], p=[0.8, 0.2])
+
+                rows.append({
+                    "employee_id": emp_id,
+                    "date": current,
+                    "overtime_hours": ot_hours,
+                    "overtime_type": ot_type,
+                })
+
+            current += timedelta(days=1)
+
+    return pd.DataFrame(rows)
+
+
+# For now: small overtime sample for first 200 employees, Jan–Mar 2025
+ot_emp_ids = employee_ids[:200]
+ot_all = []
+
+for m in [1, 2, 3]:
+    month_ot = generate_overtime_for_month(ot_emp_ids, 2025, m)
+    ot_all.append(month_ot)
+
+overtime_sample_df = pd.concat(ot_all, ignore_index=True)
+overtime_sample_df.to_csv("data_raw/overtime_sample.csv", index=False)
+print("Created data_raw/overtime_sample.csv with", len(overtime_sample_df), "rows")
+
 
 
 
