@@ -164,6 +164,65 @@ overtime_df = pd.concat(ot_all, ignore_index=True)
 overtime_df.to_csv("data_raw/overtime.csv", index=False)
 print("Created data_raw/overtime.csv with", len(overtime_df), "rows")
 
+# ---- Deductions table (monthly) ----
+
+# Simple base salary mapping by grade
+grade_base_salary = {
+    "G1": 25000,
+    "G2": 40000,
+    "G3": 60000,
+    "G4": 90000,
+    "G5": 130000,
+}
+
+def compute_annual_tax(annual_salary):
+    if annual_salary <= 250000:
+        return 0
+    elif annual_salary <= 500000:
+        return (annual_salary - 250000) * 0.05
+    elif annual_salary <= 1000000:
+        return 250000 * 0.05 + (annual_salary - 500000) * 0.20
+    else:
+        return 250000 * 0.05 + 500000 * 0.20 + (annual_salary - 1000000) * 0.30
+
+
+deduction_rows = []
+
+# Same 24 months as attendance & overtime: 2024-01 to 2025-12
+months = [(2024, m) for m in range(1, 13)] + [(2025, m) for m in range(1, 13)]
+
+for _, emp in df.iterrows():
+    base_salary = grade_base_salary[emp["grade"]]
+    annual_salary = base_salary * 12
+    annual_tax = compute_annual_tax(annual_salary)
+    monthly_tax = annual_tax / 12
+
+    for y, m in months:
+        month_str = f"{y}-{m:02d}"
+
+        # PF: 12% of base, capped at 1800
+        pf = min(base_salary * 0.12, 1800)
+
+        # ESI: 0.75% if base <= 21000, else 0
+        esi = base_salary * 0.0075 if base_salary <= 21000 else 0
+
+        # Other deductions: small random range
+        other = np.random.uniform(200, 800)
+
+        deduction_rows.append({
+            "employee_id": int(emp["employee_id"]),
+            "month": month_str,
+            "tax": round(monthly_tax, 2),
+            "pf": round(pf, 2),
+            "esi": round(esi, 2),
+            "other_deductions": round(other, 2),
+        })
+
+deductions_df = pd.DataFrame(deduction_rows)
+deductions_df.to_csv("data_raw/deductions.csv", index=False)
+print("Created data_raw/deductions.csv with", len(deductions_df), "rows")
+
+
 
 
 
