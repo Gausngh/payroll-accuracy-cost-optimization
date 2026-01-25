@@ -149,16 +149,21 @@ def generate_overtime_for_month(emp_ids, year, month, prob_ot=0.25):
 
 
 # For now: small overtime sample for first 200 employees, Jan–Mar 2025
-ot_emp_ids = employee_ids[:200]
+# Now: overtime sample for all employees, Jan–Mar 2025
+ot_emp_ids = employee_ids
 ot_all = []
 
-for m in [1, 2, 3]:
-    month_ot = generate_overtime_for_month(ot_emp_ids, 2025, m)
+# 24 months: 2024-01 to 2025-12
+years_months = [(2024, m) for m in range(1, 13)] + [(2025, m) for m in range(1, 13)]
+
+for y, m in years_months:
+    month_ot = generate_overtime_for_month(ot_emp_ids, y, m)
     ot_all.append(month_ot)
 
-overtime_sample_df = pd.concat(ot_all, ignore_index=True)
-overtime_sample_df.to_csv("data_raw/overtime_sample.csv", index=False)
-print("Created data_raw/overtime_sample.csv with", len(overtime_sample_df), "rows")
+overtime_df = pd.concat(ot_all, ignore_index=True)
+overtime_df.to_csv("data_raw/overtime.csv", index=False)
+print("Created data_raw/overtime.csv with", len(overtime_df), "rows")
+
 
 
 
