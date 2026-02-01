@@ -10,3 +10,5 @@ CREATE TABLE employee_master (
     doj           DATE,
     status        VARCHAR(20)
 );
+
+
