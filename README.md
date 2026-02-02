@@ -92,3 +92,43 @@ This project simulates and analyzes payroll data across the full stack: **Python
 ### Department Payroll
 
 ![Department Payroll](screenshots/department_payroll.png)
+
+## How to Run This Project
+
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/<your-username>/payroll-accuracy-cost-optimization.git
+   cd payroll-accuracy-cost-optimization
+Generate data (Python)
+
+Ensure Python is installed.
+
+Install any required packages (see comments in data_raw/generate_payroll_data.py if applicable).
+
+Run:
+
+bash
+python data_raw/generate_payroll_data.py
+Load data into MySQL
+
+Create DB payroll_analytics in MySQL.
+
+Run the SQL scripts in sql/ in order:
+
+02_load_data.sql
+
+03_load_attendance.sql
+
+04_load_overtime.sql
+
+05_load_deductions.sql
+
+09_build_monthly_tables.sql
+
+Open the Power BI report
+
+Open payroll_analytics.pbix in Power BI Desktop.
+
+Update the MySQL connection if needed (Server: localhost, Database: payroll_analytics).
+
+Refresh the report to load the latest data.
